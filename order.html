@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>ご注文内容確認</title>
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div id="header"></div>
+
+<main>
+
+<div class="breadcrumb">
+    <a href="index.html">HOME</a>
+    ＞ ご注文
+</div>
+
+<section class="company-content">
+
+<article class="main-content">
+
+<h2>ご注文内容確認</h2>
+
+<p>商品名</p>
+<p id="product"></p>
+
+<p>製品種別</p>
+<p id="type"></p>
+
+<p>型番</p>
+<p id="model"></p>
+
+<p>価格</p>
+<p id="price"></p>
+
+
+
+<label>カラー</label>
+
+<select id="color">
+</select>
+
+
+<br><br>
+
+
+
+<label>数量（1～5個）</label>
+
+<input
+    type="number"
+    id="quantity"
+    value="1"
+    min="1"
+    max="5">
+
+
+<p>
+合計金額：
+<span id="total"></span>円
+</p>
+
+<button onclick="goContact()">
+お問い合わせへ進む
+</button>
+
+</article>
+
+</section>
+
+</main>
+
+<div id="footer"></div>
+
+<script src="common.js"></script>
+
+<script>
+
+
+const params =
+    new URLSearchParams(window.location.search);
+
+const product =
+    params.get("product");
+
+const type =
+    params.get("type");
+
+const model =
+    params.get("model");
+
+const unitPrice =
+    Number(params.get("price"));
+
+const colors =
+    params.get("colors");
+
+document.getElementById("product").textContent =
+    product;
+
+document.getElementById("type").textContent =
+    type;
+
+
+document.getElementById("model").textContent =
+    model;
+
+
+/* ←ここに追加 */
+document.getElementById("price").textContent =
+    unitPrice.toLocaleString() + "円";
+
+const colorSelect =
+    document.getElementById("color");
+
+if(colors){
+
+    const colorList =
+        colors.split(",");
+
+    colorList.forEach(color => {
+
+        const option =
+            document.createElement("option");
+
+        option.value =
+            color;
+
+        option.textContent =
+            color;
+
+        colorSelect.appendChild(option);
+
+    });
+
+}
+
+function updateTotal(){
+
+    let quantity =
+        Number(
+            document.getElementById("quantity").value
+        );
+
+    if(quantity < 1){
+        quantity = 1;
+    }
+
+    if(quantity > 5){
+        quantity = 5;
+    }
+
+    document.getElementById("quantity").value =
+        quantity;
+
+    document.getElementById("total").textContent =
+        (
+            unitPrice * quantity
+        ).toLocaleString();
+}
+
+document
+    .getElementById("quantity")
+    .addEventListener(
+        "input",
+        updateTotal
+    );
+
+updateTotal();
+
+function goContact(){
+
+    const color =
+        document.getElementById("color").value;
+
+    const quantity =
+        Number(
+            document.getElementById("quantity").value
+        );
+    
+    if(quantity < 1 || quantity > 5){
+
+    alert("数量は1～5個で入力してください。");
+
+    return;
+    }
+
+    const total =
+        unitPrice * quantity;
+
+    location.href =
+        "contact.html" +
+        "?product=" +
+        encodeURIComponent(product) +
+
+        "&type=" +
+        encodeURIComponent(type) +
+
+        "&model=" +
+        encodeURIComponent(model) +
+
+        "&price=" +
+        unitPrice +
+
+        "&color=" +
+        encodeURIComponent(color) +
+
+        "&quantity=" +
+        quantity +
+
+        "&total=" +
+        total;
+}
+
+</script>
+
+</body>
+</html>
