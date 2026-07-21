@@ -1,4 +1,4 @@
-/* 全体 */
+﻿/* 全体 */
 
 body{
     margin:0;
@@ -12,7 +12,7 @@ body{
 
 
 /*今見ているページのメニューだけ青く*/
-.company-page .menu a[href="company.html"]{
+.about-page .menu a[href="about.html"]{
     background:#003366;
     color:white;
 }
@@ -151,7 +151,7 @@ footer{
 }
 
 
-.company-content{
+.about-content{
     display:flex;
     max-width:1200px;
     margin:auto;
