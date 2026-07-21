@@ -166,6 +166,12 @@ footer{
 
 .side-menu{
     width:250px;
+    flex-shrink: 0;
+    margin-right: 50px;
+}
+
+.main-content{
+    flex: 1;
 }
 
 .side-menu ul{
@@ -405,3 +411,4 @@ footer{
 
     opacity:0.85;
 }
+
