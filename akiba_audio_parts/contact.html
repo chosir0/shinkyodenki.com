@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>お問い合わせ | アキバオーディオパーツセンター</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="contact-page">
+
+    <!-- header.htmlを参照 -->
+    <div id="header"></div>
+
+    <main>
+
+        <div class="breadcrumb">
+            <a href="index.html">HOME</a> ＞ お問い合わせ
+        </div>
+
+        <section class="about-content">
+
+            <article class="main-content">
+
+                <h2>お問い合わせ</h2>
+
+                <p>
+                    ワークショップ体験・電子工作スペースのご利用、同人ハードウェア・技術書の委託販売、ポップアップ展示、パーツのお問い合わせ・お見積もりは以下のフォームをご利用ください。
+                </p>
+
+                <div style="background: var(--accent-light); padding: 18px 24px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 25px;">
+                    <p style="margin: 0 0 8px; font-weight: bold; color: var(--main-color);">【店舗・連絡先情報】</p>
+                    <p style="margin: 0 0 4px; font-size: 14px;"><strong>担当：</strong>國井 悠成</p>
+                    <p style="margin: 0 0 4px; font-size: 14px;"><strong>所在地：</strong>〒101-0021 東京都千代田区外神田 1-10-11 東京ラジオデパート（3階）</p>
+                    <p style="margin: 0 0 4px; font-size: 14px;"><strong>TEL：</strong>070-2194-5950</p>
+                    <p style="margin: 0 0 4px; font-size: 14px;"><strong>E-mail：</strong>yusei-kni@outlook.jp</p>
+                    <p style="margin: 0; font-size: 14px;"><strong>公式X：</strong><a href="https://x.com/akibaparts" target="_blank" rel="noopener" style="color: var(--main-color); font-weight: bold;">@akibaparts</a></p>
+                </div>
+
+                <form id="contactForm">
+
+                    <label for="name" style="display: block; font-weight: bold; margin-bottom: 8px;">お名前 <span style="color: #c00;">*</span></label>
+                    <input type="text" id="name" placeholder="例：山田 太郎" required>
+
+                    <label for="tel" style="display: block; font-weight: bold; margin-bottom: 8px;">お電話番号</label>
+                    <input type="text" id="tel" placeholder="例：090-1234-5678">
+
+                    <label for="email" style="display: block; font-weight: bold; margin-bottom: 8px;">メールアドレス <span style="color: #c00;">*</span></label>
+                    <input type="email" id="email" placeholder="例：example@domain.com" required>
+
+                    <label for="message" style="display: block; font-weight: bold; margin-bottom: 8px;">お問い合わせ内容 <span style="color: #c00;">*</span></label>
+                    <textarea id="message" placeholder="委託販売のご相談、ワークショップ体験のご予約、展示希望、パーツの在庫確認など、お気軽にご記入ください。" required></textarea>
+
+                    <button type="button" class="btn-contact" onclick="sendMail()" style="border: none; cursor: pointer; font-size: 18px; width: 100%; max-width: 320px; display: block; margin: 20px auto 0;">
+                        メール作成
+                    </button>
+
+                </form>
+
+            </article>
+
+        </section>
+
+    </main>
+
+    <!-- footer.htmlを参照 -->
+    <div id="footer"></div>
+
+    <!-- common.jsを参照 -->
+    <script src="common.js"></script>
+
+    <script>
+    function sendMail() {
+        const name = document.getElementById("name").value.trim();
+        const tel = document.getElementById("tel").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const message = document.getElementById("message").value.trim();
+
+        if (!name || !email || !message) {
+            alert("お名前、メールアドレス、お問い合わせ内容をご入力ください。");
+            return;
+        }
+
+        const subject = encodeURIComponent("アキバオーディオパーツセンターへのお問い合わせ");
+        const body = encodeURIComponent(
+            "【アキバオーディオパーツセンター お問い合わせ】\n\n" +
+            "お名前：" + name + "\n" +
+            "電話番号：" + (tel || "未記入") + "\n" +
+            "メールアドレス：" + email + "\n\n" +
+            "■お問い合わせ内容\n" +
+            message
+        );
+
+        location.href = "mailto:yusei-kni@outlook.jp?subject=" + subject + "&body=" + body;
+    }
+    </script>
+
+</body>
+
+</html>
