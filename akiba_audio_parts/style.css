@@ -8,6 +8,12 @@
     --accent-light: #f4faf6;
 }
 
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 /* 全体 */
 body {
     margin: 0;
@@ -17,6 +23,7 @@ body {
     flex-direction: column;
     background-color: var(--bg-color);
     color: var(--text-color);
+    overflow-x: hidden;
 }
 
 /* 今見ているページのメニューだけアクティブ表示 */
@@ -633,6 +640,7 @@ footer {
 .main-content {
     flex: 1;
     max-width: 800px;
+    min-width: 0;
 }
 
 .main-content h2 {
@@ -652,3 +660,315 @@ footer {
     font-size: 16px;
     line-height: 1.8;
 }
+
+/* フォーム共通スタイル */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 14px;
+    font-size: 16px;
+    font-family: inherit;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: #fff;
+    color: var(--text-color);
+    margin-bottom: 18px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus,
+textarea:focus {
+    border-color: var(--main-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 107, 59, 0.15);
+}
+
+textarea {
+    min-height: 140px;
+    resize: vertical;
+}
+
+/* ---------------- */
+/* レスポンシブ対応（タブレット・スマホ） */
+/* ---------------- */
+@media (max-width: 860px) {
+    /* ヘッダー */
+    header {
+        padding: 14px 20px;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .logo img {
+        height: 52px;
+        max-width: 100%;
+    }
+
+    .menu {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .menu li {
+        flex: 1;
+        text-align: center;
+    }
+
+    .menu a {
+        padding: 12px 10px;
+        font-size: 14px;
+    }
+
+    /* メインコンテナ */
+    main {
+        padding: 15px 15px 40px;
+    }
+
+    /* サブページ共通（事業情報、お問い合わせ、特商法、ポリシー等） */
+    .about-content {
+        flex-direction: column;
+        padding: 30px 20px;
+    }
+
+    .side-menu {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 25px;
+        background: var(--accent-light);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 8px 14px;
+        box-sizing: border-box;
+    }
+
+    .side-menu ul {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0 12px;
+    }
+
+    .side-menu li {
+        border-bottom: none;
+        border-right: 1px solid var(--border-color);
+        padding-right: 12px;
+    }
+
+    .side-menu li:last-child {
+        border-right: none;
+        padding-right: 0;
+    }
+
+    .side-menu a {
+        padding: 10px 4px;
+        font-size: 14px;
+    }
+
+    .side-menu a:hover {
+        padding-left: 4px;
+    }
+
+    .main-content {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .main-content h2 {
+        font-size: 26px;
+    }
+
+    /* フッター */
+    footer {
+        padding: 35px 20px 25px;
+    }
+
+    .footer-container {
+        gap: 25px;
+    }
+
+    .footer-column {
+        width: 45%;
+    }
+}
+
+@media (max-width: 600px) {
+    /* スマートフォン幅 */
+    header {
+        padding: 12px 14px;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .logo {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .logo img {
+        height: 38px;
+        max-width: 100%;
+        object-fit: contain;
+    }
+
+    .menu {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .menu li {
+        flex: 1;
+        text-align: center;
+    }
+
+    .menu a {
+        padding: 10px 8px;
+        font-size: 14px;
+        text-align: center;
+    }
+
+    main {
+        padding: 10px 10px 30px;
+    }
+
+    /* ヒーローセクション */
+    .hero {
+        padding: 28px 16px 24px;
+        margin: 10px auto 25px;
+        border-radius: 12px;
+    }
+
+    .hero-catch {
+        font-size: 19px;
+        line-height: 1.4;
+    }
+
+    .hero-sub {
+        font-size: 14px;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+
+    .business-hours-card {
+        padding: 16px 12px;
+        border-radius: 10px;
+    }
+
+    .hours-main {
+        font-size: 17px;
+    }
+
+    .hours-days-grid {
+        flex-direction: column;
+        gap: 6px;
+        font-size: 14px;
+    }
+
+    /* 3大スペース紹介 */
+    .spaces-section {
+        margin-bottom: 30px;
+    }
+
+    .section-title {
+        font-size: 22px;
+        margin-bottom: 20px;
+    }
+
+    .space-card {
+        padding: 20px 16px;
+    }
+
+    .space-image-wrapper {
+        height: 170px;
+    }
+
+    /* 相談・見積・店舗情報セクション */
+    .info-section {
+        padding: 24px 16px;
+        border-radius: 12px;
+    }
+
+    .info-title {
+        font-size: 20px;
+    }
+
+    .info-list li {
+        font-size: 14px;
+        line-height: 1.7;
+    }
+
+    .btn-contact {
+        padding: 14px 20px;
+        font-size: 16px;
+    }
+
+    .btn-sns {
+        padding: 12px 18px;
+        font-size: 14px;
+    }
+
+    /* サブページ（about, contact, SCTL, privacy等） */
+    .breadcrumb {
+        margin: 8px auto 14px;
+        font-size: 13px;
+    }
+
+    .about-content {
+        padding: 18px 14px;
+        border-radius: 10px;
+    }
+
+    .side-menu {
+        padding: 6px 12px;
+        margin-bottom: 20px;
+    }
+
+    .side-menu ul {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .side-menu li {
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        padding-right: 0;
+    }
+
+    .side-menu li:last-child {
+        border-bottom: none;
+    }
+
+    .main-content h2 {
+        font-size: 22px;
+        margin-bottom: 15px;
+        padding-bottom: 8px;
+    }
+
+    .main-content h3 {
+        font-size: 16px;
+        line-height: 1.6;
+    }
+
+    .main-content p {
+        font-size: 14px;
+        line-height: 1.7;
+    }
+
+    /* フッター */
+    .footer-column {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    .footer-column h3 {
+        font-size: 15px;
+        margin-bottom: 8px;
+    }
+}
+
