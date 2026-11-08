@@ -1,0 +1,9 @@
+{
+  "shelves": [
+    { "id": "large-a", "status": "確認中", "updatedAt": null },
+    { "id": "large-b", "status": "確認中", "updatedAt": null },
+    { "id": "small-a", "status": "確認中", "updatedAt": null },
+    { "id": "small-b", "status": "確認中", "updatedAt": null },
+    { "id": "small-c", "status": "確認中", "updatedAt": null }
+  ]
+}

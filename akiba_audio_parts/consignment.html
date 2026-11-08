@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="shelf-simulator.css?v=25d9cfe">
     <link rel="stylesheet" href="shelf-viewer.fe14290af1ec.css">
+    <link rel="stylesheet" href="shelf-availability.v1.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,10 +27,24 @@
 
         <section class="shelf-intro">
             <p class="shelf-eyebrow">作品に合わせて、必要な面だけ。</p>
-            <h1>委託棚 料金シミュレータ</h1>
-            <p>あなたのキットや作品を、秋葉原の店頭へ。棚のサイズと展示に使う面を選んで、月々の費用を確認できます。</p>
+            <h1>委託販売のご案内</h1>
+            <p>あなたのキットや作品を、秋葉原の店頭へ。商品に直接さわれる展示で、作品の魅力を伝えられます。大小の棚から必要な面を組み合わせて利用できます。</p>
+            <p>まず棚の空き状況を確認し、3D表示と料金シミュレーターで展示方法・費用をご検討ください。希望する棚と利用面を添えて、出展についてご相談いただけます。</p>
             <div class="shelf-benefits"><span>新規オーナーは初月の棚代0円</span><span>月額・税込表示</span><span>商品に直接さわれる展示</span></div>
         </section>
+        <section class="availability-section" aria-labelledby="availability-title">
+            <p class="shelf-eyebrow">展示する場所を確認</p>
+            <h2 id="availability-title">現在の棚の空き状況</h2>
+            <p>左から大型棚A・大型棚B・小型棚A・小型棚B・小型棚Cの順に並んでいます。</p>
+            <p class="shelf-note">棚を上から見た簡略図です。スマートフォンでは横にスクロールして確認できます。</p>
+            <div class="availability-scroll" tabindex="0" role="region" aria-label="5台の棚の配置と空き状況。横にスクロールできます。">
+                <div id="availability-map" class="availability-map"><p role="status">空き状況を読み込んでいます…</p></div>
+            </div>
+            <p id="availability-message" role="status" class="shelf-note"></p>
+            <noscript><p>空き状況の表示にはJavaScriptが必要です。最新状況はお問い合わせください。</p></noscript>
+            <p class="shelf-note">「空きあり」は棚全体が未使用、「一部利用中」は一部の面が利用中、「満室」は貸出可能な面に空きがない状態です。「確認中」の棚はお問い合わせください。表示は更新日時点の目安で、予約確定を示すものではありません。</p>
+        </section>
+        <section class="simulator-heading" aria-labelledby="simulator-title"><h2 id="simulator-title">3D表示・料金シミュレーター</h2><p>棚のサイズと展示に使う面を選んで、月々の費用を確認できます。</p></section>
         <div class="shelf-layout" id="shelf-simulator">
             <section class="shelf-panel" aria-labelledby="choose-title">
                 <h2 id="choose-title">1. 棚のサイズを選ぶ</h2>
@@ -111,6 +126,7 @@
                 <p class="shelf-note">この計算は検討用です。空き状況・予約・契約の確定や、商品の設置を保証するものではありません。手数料の端数処理・実際の精算額は店舗へご確認ください。</p>
             </aside>
         </div>
+        <section class="consignment-consult" aria-labelledby="consult-title"><h2 id="consult-title">問い合わせ・出展相談</h2><p>展示したい商品の内容と、ご希望の棚・利用面をお知らせください。配置や空き状況を確認してご案内します。料金シミュレーターの「プラン内容をコピー」もご利用いただけます。</p><a href="contact.html" class="btn-contact">委託販売・出展について相談する</a></section>
         <noscript><p class="shelf-panel">料金シミュレータの利用にはJavaScriptを有効にしてください。料金のご相談は<a href="contact.html">お問い合わせ</a>へどうぞ。</p></noscript>
 
     </main>
@@ -119,6 +135,7 @@
     <div id="footer"></div>
     <!-- common.jsを参照 -->
     <script src="common.js"></script>
+    <script type="module" src="shelf-availability.v1.js"></script>
     <script src="shelf-simulator.js?v=product-copy-1"></script>
     <script type="module" src="shelf-viewer.js?v=product-planner-collapsed-1"></script>
 
