@@ -64,8 +64,8 @@
                     </div>
                     <div class="viewer-legend"><span class="legend-top">天面</span><span class="legend-side">側面</span><span class="legend-back">背面</span><span class="legend-floor">水平面</span><span>● 選択中は濃い色</span></div>
                     <p id="viewer-status" role="status">番号は棚を正面から見た左右に対応します。</p>
-                    <section class="product-planner" aria-labelledby="products-title">
-                        <h3 id="products-title">商品の寸法を入力して配置</h3>
+                    <details class="product-planner" id="product-planner">
+                        <summary id="products-title">商品の寸法を入力して配置（任意）</summary>
                         <p class="shelf-note">パッケージや突起を含む総寸法をmmで入力してください。1つの箱で商品の外形、または複数個をまとめた展示全体の外形を表せます。</p>
                         <label for="product-edit">編集する商品</label><select id="product-edit"><option value="new">新しい商品を追加</option></select>
                         <form id="product-form">
@@ -87,8 +87,8 @@
                         <a href="#shelf-viewport" class="shelf-contact">↑ 3Dで配置を確認</a><p id="product-message" role="status" class="shelf-note"></p>
                         <div id="product-summary" aria-live="polite"></div>
                         <p class="shelf-note">位置は商品外形の左端・手前端から指定します。変更後は「3Dに追加／変更を反映」を押してください。商品は箱として表示し、料金の面選択とは別に検討できます。配置内容はこのページ内だけに保持し、再読み込みすると消えます。棚材・ひもとの精密な接触や耐荷重は判定しません。</p>
-                    </section>
-                    <details><summary>貸出面の番号図を見る</summary><img src="images/shelf-face-map.png" alt="料金プランの番号図。天面①②、左右の側面は上から③④・⑤⑥・⑦⑧、背面は上から⑨⑩・⑪⑫・⑬⑭、棚板の水平面は左⑮・右⑯。" class="shelf-face-map"></details>
+                    </details>
+                    <details id="face-map-details"><summary>貸出面の番号図を見る</summary><img src="images/shelf-face-map.png" alt="料金プランの番号図。天面①②、左右の側面は上から③④・⑤⑥・⑦⑧、背面は上から⑨⑩・⑪⑫・⑬⑭、棚板の水平面は左⑮・右⑯。" class="shelf-face-map"></details>
                     <p class="shelf-note">棚本体は提供CADデータを使用。色付きの面と区切りは料金プランの図に基づく位置の目安です。正確な利用範囲・設置方法は店舗にご確認ください。</p>
                 </section>
                 <h2>2. 利用する面を選ぶ</h2>
@@ -120,7 +120,7 @@
     <!-- common.jsを参照 -->
     <script src="common.js"></script>
     <script src="shelf-simulator.js?v=product-copy-1"></script>
-    <script type="module" src="shelf-viewer.js?v=product-placement-1"></script>
+    <script type="module" src="shelf-viewer.js?v=product-planner-collapsed-1"></script>
 
 </body>
 

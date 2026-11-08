@@ -308,6 +308,7 @@ try {
         if(hits.length) {
             const productId=hits[0].object.userData.productId;
             if(productId){
+                document.getElementById('product-planner').open=true;
                 const editor=document.getElementById('product-edit');editor.value=String(productId);editor.dispatchEvent(new Event('change'));
                 status.textContent=`商品P${productId}を編集対象にしました。下の入力欄で寸法・位置を変更できます。`;
             } else toggle(hits[0].object.userData.faceId);
@@ -338,7 +339,7 @@ try {
     setSize(state.size);
 } catch(error) {
     loading.textContent='この環境では3D表示を利用できません。下の番号図をご確認ください。料金計算はそのまま利用できます。';
-    document.querySelector('.shelf-viewer details').open=true;
+    document.getElementById('face-map-details').open=true;
     document.querySelectorAll('.viewer-toolbar button,#viewer-filter,#product-form input,#product-form select,#product-form button,#product-edit').forEach(input=>{input.disabled=true;});
     console.error('Shelf viewer:',error);
 }
