@@ -9,7 +9,7 @@ const filter = document.getElementById('viewer-filter');
 const colors = {天面:0x84b941,側面:0x009dce,背面:0xe7ac00,水平面:0x49a46a};
 const configs = {
     small:{width:700,depth:350,height:1052,levels:[1050,700,350,0],shelf:353},
-    large:{width:900,depth:450,height:1200,levels:[1200,750,300,0],shelf:503}
+    large:{width:900,depth:450,height:1200,levels:[1200,850,500,0],shelf:503}
 };
 let state = window.shelfState || {size:'small',selected:[]};
 let currentSize, generation = 0, renderer, scene, camera, controls, model, surfaces;
@@ -102,10 +102,8 @@ function makeFaces(config) {
         const y=(l[row]+l[row+1])/2,h=l[row]-l[row+1];
         add(3+row*2,'側面',[-w/2-6,y,0],d,h,[0,Math.PI/2,0]);
         add(4+row*2,'側面',[ w/2+6,y,0],d,h,[0,Math.PI/2,0]);
-        // Keep the middle back labels clear of the large shelf's horizontal board.
-        const backLabelY = row === 1 && config === configs.large ? y+h*.22 : y;
-        add(9+row*2,'背面',[-w/4,y,-d/2-6],w/2,h,[0,0,0],[-w/4,backLabelY,-d/2-6]);
-        add(10+row*2,'背面',[w/4,y,-d/2-6],w/2,h,[0,0,0],[w/4,backLabelY,-d/2-6]);
+        add(9+row*2,'背面',[-w/4,y,-d/2-6],w/2,h,[0,0,0]);
+        add(10+row*2,'背面',[w/4,y,-d/2-6],w/2,h,[0,0,0]);
     }
     add(15,'水平面',[-w/4,shelf+5,0],w/2,d,[-Math.PI/2,0,0],[-w/4,shelf+10,d*.32]);
     add(16,'水平面',[w/4,shelf+5,0],w/2,d,[-Math.PI/2,0,0],[w/4,shelf+10,d*.32]);
