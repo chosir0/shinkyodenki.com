@@ -1,5 +1,6 @@
 import * as THREE from './vendor/three.module.js';
 import { OrbitControls } from './vendor/OrbitControls.js';
+import { PRODUCT_AREAS, productBounds, inspectProducts } from './shelf-products.js';
 
 const viewport = document.getElementById('shelf-viewport');
 const labels = document.getElementById('shelf-labels');
@@ -15,6 +16,7 @@ let state = window.shelfState || {size:'small',selected:[]};
 let currentSize, generation = 0, renderer, scene, camera, controls, model, surfaces;
 let faceObjects = [], examples = [], hovered = null, visible = true;
 const cache = new Map();
+let products = [], productGroup, nextProductId = 1;
 const number = id => String.fromCodePoint(0x245f+id);
 const checkbox = id => document.querySelector(`#face-groups input[value="${id}"]`);
 
@@ -59,7 +61,7 @@ function refresh() {
 function dispose(group) {
     group.traverse(object => {
         object.geometry?.dispose();
-        if (object.material) object.material.dispose();
+        if (object.material) {object.material.map?.dispose();object.material.dispose();}
     });
     scene.remove(group);
 }
@@ -156,6 +158,7 @@ async function setSize(size) {
     currentSize = size;
     if (model) {dispose(model);model=null;}
     makeFaces(configs[size]);
+    renderProducts();
     view();
     loading.hidden = false;
     loading.textContent = `${size==='large'?'大型棚':'小型棚'}の3Dデータを読み込んでいます…`;
@@ -177,6 +180,83 @@ async function setSize(size) {
     }
 }
 
+function renderProducts() {
+    if (productGroup) dispose(productGroup);
+    productGroup = new THREE.Group();
+    scene.add(productGroup);
+    const config=configs[state.size];
+    const {warnings,bounds}=inspectProducts(products,config,state.selected);
+    const summary=document.getElementById('product-summary');
+    summary.replaceChildren();
+    const plan=[];
+    products.forEach((product,i)=>{
+        const b=bounds[i],area=PRODUCT_AREAS[product.area];
+        const warning=warnings.get(product.id);
+        const color=warning.length?0xc17825:0x326fba;
+        const box=new THREE.Mesh(new THREE.BoxGeometry(b.width,product.height,b.depth),new THREE.MeshStandardMaterial({color,transparent:true,opacity:.85,roughness:.8}));
+        box.userData.productId=product.id;
+        box.position.set(...b.min.map((v,axis)=>(v+b.max[axis])/2));
+        productGroup.add(box);
+        const edges=new THREE.LineSegments(new THREE.EdgesGeometry(box.geometry),new THREE.LineBasicMaterial({color:0x244039}));
+        edges.position.copy(box.position);
+        productGroup.add(edges);
+        if(area.hanging)for(const x of [b.min[0]+b.width*.25,b.min[0]+b.width*.75]) {
+            productGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(x,config.levels[0],box.position.z),new THREE.Vector3(x,b.max[1],box.position.z)]),new THREE.LineBasicMaterial({color:0x795733})));
+        }
+        const canvas=document.createElement('canvas');canvas.width=128;canvas.height=64;
+        const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,128,64);ctx.fillStyle='#244039';ctx.font='bold 38px sans-serif';ctx.textAlign='center';ctx.fillText(`P${product.id}`,64,45);
+        const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(canvas),depthTest:false}));
+        sprite.position.set(box.position.x,b.max[1]+22,box.position.z);sprite.scale.set(65,32,1);productGroup.add(sprite);
+        const row=document.createElement('div');row.className='product-record';
+        const title=document.createElement('strong');title.textContent=`P${product.id} ${product.name}`;row.append(title);
+        const text=document.createElement('p');text.textContent=`${product.width} × ${product.depth} × ${product.height}mm（幅・奥行・高さ）${product.rotated?'／90度回転':''}｜${area.label}｜区画左端から${product.x}mm・手前から${product.z}mm${area.hanging?'・吊り長さ'+product.gap+'mm':''}`;row.append(text);
+        for(const message of warning){const note=document.createElement('p');note.className='product-warning';note.textContent=message;row.append(note);}
+        if(!warning.length){const note=document.createElement('p');note.textContent='目安の区画内に収まっています。設置可否は店舗へご確認ください。';row.append(note);}
+        summary.append(row);
+        plan.push(`${title.textContent}\n${text.textContent}\n${warning.length?warning.join('\n'):'目安の区画内'}`);
+    });
+    window.shelfProductsText=products.length?'\n\n商品配置（参考・mm）\n'+plan.join('\n\n'):'';
+    document.getElementById('copy-status').textContent='';
+}
+
+function setupProducts() {
+    const form=document.getElementById('product-form'),edit=document.getElementById('product-edit');
+    const field=name=>document.getElementById('product-'+name);
+    const message=document.getElementById('product-message');
+    function updateArea(){field('gap').disabled=!PRODUCT_AREAS[Number(field('area').value)].hanging;}
+    function fillEditor() {
+        const product=products.find(p=>p.id===Number(edit.value));
+        for(const name of ['name','width','depth','height','area','x','z','gap'])field(name).value=product?product[name]:({name:'',width:150,depth:100,height:100,area:15,x:20,z:20,gap:50})[name];
+        field('rotated').checked=!!product?.rotated;
+        field('save').textContent=product?'変更を反映':'3Dに追加';field('delete').disabled=!product;
+        updateArea();
+    }
+    function updateEditorOptions(id) {
+        edit.replaceChildren(new Option('新しい商品を追加','new'));
+        for(const product of products)edit.add(new Option(`P${product.id} ${product.name}`,String(product.id)));
+        edit.value=id?String(id):'new';fillEditor();
+    }
+    edit.addEventListener('change',fillEditor);
+    field('area').addEventListener('change',updateArea);
+    form.addEventListener('submit',event=>{
+        event.preventDefault();
+        if(!form.reportValidity())return;
+        const previous=products.find(p=>p.id===Number(edit.value));
+        if(!previous&&products.length>=40){message.textContent='商品は40件まで追加できます。不要な商品を削除してください。';return;}
+        const product={id:previous?previous.id:nextProductId++,name:field('name').value.trim()||'商品',rotated:field('rotated').checked};
+        for(const name of ['width','depth','height','area','x','z','gap'])product[name]=Number(field(name).value);
+        if(!PRODUCT_AREAS[product.area]||!['width','depth','height','x','z','gap'].every(name=>Number.isFinite(product[name])))return;
+        if(previous)products=products.map(p=>p.id===product.id?product:p);else products.push(product);
+        document.getElementById('show-examples').checked=false;refresh();
+        updateEditorOptions(product.id);renderProducts();
+        message.textContent=`P${product.id}を${previous?'更新':'追加'}しました。3Dと下の配置チェックをご確認ください。`;
+    });
+    field('delete').addEventListener('click',()=>{
+        products=products.filter(p=>p.id!==Number(edit.value));updateEditorOptions();renderProducts();message.textContent='選択した商品を削除しました。';
+    });
+    updateArea();
+}
+
 try {
     renderer = new THREE.WebGLRenderer({antialias:true,alpha:true});
     renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
@@ -184,6 +264,7 @@ try {
     viewport.prepend(renderer.domElement);
     renderer.domElement.setAttribute('aria-hidden','true');
     scene = new THREE.Scene();
+    setupProducts();
     camera = new THREE.PerspectiveCamera(38,1,1,20000);
     controls = new OrbitControls(camera,renderer.domElement);
     controls.enablePan = false;
@@ -223,8 +304,14 @@ try {
         const rect=renderer.domElement.getBoundingClientRect();
         pointer.set((event.clientX-rect.left)/rect.width*2-1,-(event.clientY-rect.top)/rect.height*2+1);
         raycaster.setFromCamera(pointer,camera);
-        const hits=raycaster.intersectObjects(faceObjects.filter(face=>face.mesh.visible).map(face=>face.mesh));
-        if(hits.length) toggle(hits[0].object.userData.faceId);
+        const hits=raycaster.intersectObjects([...faceObjects.filter(face=>face.mesh.visible).map(face=>face.mesh),...(productGroup?.children.filter(object=>object.isMesh)||[])]);
+        if(hits.length) {
+            const productId=hits[0].object.userData.productId;
+            if(productId){
+                const editor=document.getElementById('product-edit');editor.value=String(productId);editor.dispatchEvent(new Event('change'));
+                status.textContent=`商品P${productId}を編集対象にしました。下の入力欄で寸法・位置を変更できます。`;
+            } else toggle(hits[0].object.userData.faceId);
+        }
     });
     document.querySelectorAll('[data-view]').forEach(button=>button.addEventListener('click',()=>view(button.dataset.view)));
     document.querySelectorAll('[data-zoom]').forEach(button=>button.addEventListener('click',()=>{
@@ -241,7 +328,7 @@ try {
     window.addEventListener('shelf-state-change',event=>{
         state=event.detail;
         if (state.size!==currentSize) setSize(state.size);
-        else refresh();
+        else {refresh();renderProducts();}
     });
     renderer.domElement.addEventListener('webglcontextlost',event=>{
         event.preventDefault();
@@ -252,6 +339,6 @@ try {
 } catch(error) {
     loading.textContent='この環境では3D表示を利用できません。下の番号図をご確認ください。料金計算はそのまま利用できます。';
     document.querySelector('.shelf-viewer details').open=true;
-    document.querySelectorAll('.viewer-toolbar button,#viewer-filter').forEach(input=>{input.disabled=true;});
+    document.querySelectorAll('.viewer-toolbar button,#viewer-filter,#product-form input,#product-form select,#product-form button,#product-edit').forEach(input=>{input.disabled=true;});
     console.error('Shelf viewer:',error);
 }

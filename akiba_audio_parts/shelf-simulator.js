@@ -105,7 +105,7 @@ if (typeof document !== 'undefined') {
     document.getElementById('clear-faces').addEventListener('click',() => {selected.clear();update();});
     document.getElementById('monthly-sales').addEventListener('input',update);
     document.getElementById('copy-plan').addEventListener('click',async () => {
-        try {await navigator.clipboard.writeText(planText);document.getElementById('copy-status').textContent='コピーしました。お問い合わせ本文に貼り付けてご利用ください。';}
+        try {await navigator.clipboard.writeText(planText+(window.shelfProductsText || ''));document.getElementById('copy-status').textContent='コピーしました。お問い合わせ本文に貼り付けてご利用ください。';}
         catch {document.getElementById('copy-status').textContent='コピーできませんでした。表示された利用面と料金をお問い合わせ本文にご記入ください。';}
     });
     update();

@@ -8,7 +8,7 @@
 
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="shelf-simulator.css?v=25d9cfe">
-    <link rel="stylesheet" href="shelf-viewer.4ffa725883da.css">
+    <link rel="stylesheet" href="shelf-viewer.fe14290af1ec.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -64,6 +64,30 @@
                     </div>
                     <div class="viewer-legend"><span class="legend-top">天面</span><span class="legend-side">側面</span><span class="legend-back">背面</span><span class="legend-floor">水平面</span><span>● 選択中は濃い色</span></div>
                     <p id="viewer-status" role="status">番号は棚を正面から見た左右に対応します。</p>
+                    <section class="product-planner" aria-labelledby="products-title">
+                        <h3 id="products-title">商品の寸法を入力して配置</h3>
+                        <p class="shelf-note">パッケージや突起を含む総寸法をmmで入力してください。1つの箱で商品の外形、または複数個をまとめた展示全体の外形を表せます。</p>
+                        <label for="product-edit">編集する商品</label><select id="product-edit"><option value="new">新しい商品を追加</option></select>
+                        <form id="product-form">
+                            <label for="product-name">商品名</label><input id="product-name" type="text" maxlength="60" placeholder="例：アンプキット（箱入り）">
+                            <div class="product-fields">
+                                <label>幅（mm）<input id="product-width" type="number" min="1" max="5000" step="1" value="150" required inputmode="numeric"></label>
+                                <label>奥行（mm）<input id="product-depth" type="number" min="1" max="5000" step="1" value="100" required inputmode="numeric"></label>
+                                <label>高さ（mm）<input id="product-height" type="number" min="1" max="5000" step="1" value="100" required inputmode="numeric"></label>
+                            </div>
+                            <label for="product-area">展示する場所・方法</label><select id="product-area"><option value="15">⑮ 左の棚板に置く</option><option value="16">⑯ 右の棚板に置く</option><option value="1">① 左の天面から吊るす</option><option value="2">② 右の天面から吊るす</option></select>
+                            <div class="product-fields">
+                                <label>区画左端から（mm）<input id="product-x" type="number" min="-5000" max="5000" step="1" value="20" required inputmode="numeric"></label>
+                                <label>棚の手前から（mm）<input id="product-z" type="number" min="-5000" max="5000" step="1" value="20" required inputmode="numeric"></label>
+                                <label>天面からの吊り長さ（mm）<input id="product-gap" type="number" min="0" max="5000" step="1" value="50" required inputmode="numeric"></label>
+                            </div>
+                            <label class="example-toggle"><input id="product-rotated" type="checkbox"> 横向きに90度回転（幅と奥行を入れ替え）</label>
+                            <div class="shelf-actions"><button id="product-save" type="submit">3Dに追加</button><button id="product-delete" type="button" disabled>選んだ商品を削除</button></div>
+                        </form>
+                        <a href="#shelf-viewport" class="shelf-contact">↑ 3Dで配置を確認</a><p id="product-message" role="status" class="shelf-note"></p>
+                        <div id="product-summary" aria-live="polite"></div>
+                        <p class="shelf-note">位置は商品外形の左端・手前端から指定します。変更後は「3Dに追加／変更を反映」を押してください。商品は箱として表示し、料金の面選択とは別に検討できます。配置内容はこのページ内だけに保持し、再読み込みすると消えます。棚材・ひもとの精密な接触や耐荷重は判定しません。</p>
+                    </section>
                     <details><summary>貸出面の番号図を見る</summary><img src="images/shelf-face-map.png" alt="料金プランの番号図。天面①②、左右の側面は上から③④・⑤⑥・⑦⑧、背面は上から⑨⑩・⑪⑫・⑬⑭、棚板の水平面は左⑮・右⑯。" class="shelf-face-map"></details>
                     <p class="shelf-note">棚本体は提供CADデータを使用。色付きの面と区切りは料金プランの図に基づく位置の目安です。正確な利用範囲・設置方法は店舗にご確認ください。</p>
                 </section>
@@ -95,8 +119,8 @@
     <div id="footer"></div>
     <!-- common.jsを参照 -->
     <script src="common.js"></script>
-    <script src="shelf-simulator.js?v=face-dimensions-1"></script>
-    <script type="module" src="shelf-viewer.js?v=large-height-1050"></script>
+    <script src="shelf-simulator.js?v=product-copy-1"></script>
+    <script type="module" src="shelf-viewer.js?v=product-placement-1"></script>
 
 </body>
 
