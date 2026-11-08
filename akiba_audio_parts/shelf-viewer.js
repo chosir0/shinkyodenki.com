@@ -9,7 +9,7 @@ const filter = document.getElementById('viewer-filter');
 const colors = {天面:0x84b941,側面:0x009dce,背面:0xe7ac00,水平面:0x49a46a};
 const configs = {
     small:{width:700,depth:350,height:1052,levels:[1050,700,350,0],shelf:353},
-    large:{width:900,depth:450,height:1200,levels:[1200,850,500,0],shelf:503}
+    large:{width:900,depth:450,height:1050,levels:[1050,700,350,0],shelf:353}
 };
 let state = window.shelfState || {size:'small',selected:[]};
 let currentSize, generation = 0, renderer, scene, camera, controls, model, surfaces;
@@ -132,7 +132,7 @@ function makeFaces(config) {
 
 async function geometryFor(size) {
     if (!cache.has(size)) cache.set(size,(async () => {
-        const response = await fetch(`models/${size}.bin`);
+        const response = await fetch(size === 'large' ? 'models/large-1050.bin' : 'models/small.bin');
         if (!response.ok) throw Error(`Model HTTP ${response.status}`);
         const buffer = await response.arrayBuffer();
         const header = new Uint32Array(buffer,0,2);
