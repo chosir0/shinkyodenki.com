@@ -14,6 +14,15 @@ const FACE_REQUIREMENTS = {
     15:{ids:[5,11],mode:'all'},16:{ids:[6,12],mode:'all'}
 };
 const FACE_USAGE = {1:'吊り下げ専用・上置き不可',2:'吊り下げ専用・上置き不可',15:'棚板に置く専用・吊り下げ不可',16:'棚板に置く専用・吊り下げ不可'};
+const SHELF_DIMENSIONS = {small:{width:700,depth:350},large:{width:900,depth:450}};
+function faceDimensions(size,id) {
+    const {width,depth} = SHELF_DIMENSIONS[size];
+    const face = SHELF_FACES.find(face => face[0] === id);
+    if (face[2] === '天面' || face[2] === '水平面') return `約 幅${width/2} × 奥行${depth}mm`;
+    const row = Math.floor((id-(face[2] === '側面' ? 3 : 9))/2);
+    const bottom = (2-row)*350;
+    return `約 ${face[2] === '側面' ? '奥行'+depth : '幅'+width/2} × 高さ350mm（床から${bottom}〜${bottom+350}mm）`;
+}
 function faceAllowed(id, selected) {
     const rule = FACE_REQUIREMENTS[id];
     return !rule || (rule.mode === 'all' ? rule.ids.every(required => selected.has(required)) : rule.ids.some(required => selected.has(required)));
@@ -51,7 +60,7 @@ if (typeof document !== 'undefined') {
             const id = face[0];
             const rule = FACE_REQUIREMENTS[id];
             const requirement = rule ? `${rule.ids.map(circled).join(rule.mode === 'all' ? ' と ' : ' または ')}${rule.mode === 'all' ? 'の両方' : ''}の選択が必要` : '';
-            label.innerHTML = `<input type="checkbox" value="${id}"><span>${circled(id)} ${face[1]}${FACE_USAGE[id] ? `<small class="face-usage">${FACE_USAGE[id]}</small>` : ''}<span class="face-price"></span>${requirement ? `<small>${requirement}</small>` : ''}</span>`;
+            label.innerHTML = `<input type="checkbox" value="${id}"><span>${circled(id)} ${face[1]}${FACE_USAGE[id] ? `<small class="face-usage">${FACE_USAGE[id]}</small>` : ''}<small class="face-dimension"></small><span class="face-price"></span>${requirement ? `<small>${requirement}</small>` : ''}</span>`;
             label.querySelector('input').dataset.requirement = requirement;
             label.querySelector('input').dataset.usage = FACE_USAGE[id] || '';
             grid.append(label);
@@ -72,14 +81,16 @@ if (typeof document !== 'undefined') {
             checkbox.checked = selected.has(id);
             checkbox.disabled = !faceAllowed(id,selected);
             const face = SHELF_FACES.find(face => face[0] === id);
+            checkbox.closest('label').querySelector('.face-dimension').textContent = faceDimensions(size,id);
             checkbox.closest('label').querySelector('.face-price').textContent = `${yen(face[size === 'large' ? 4 : 3])} / 月`;
         }
         const names = SHELF_FACES.filter(face => selected.has(face[0])).map(face => `${circled(face[0])}${face[1]}・${face[2]}`);
+        const dimensionNames = SHELF_FACES.filter(face => selected.has(face[0])).map(face => `${circled(face[0])}${face[1]}・${face[2]}：${faceDimensions(size,face[0])}`);
         document.getElementById('quote').innerHTML = `<p>${size === 'large' ? '大型棚' : '小型棚'} · ${selected.size}面を選択</p><p class="quote-price">${yen(result.rent)}<small> / 月（税込）</small></p><div class="quote-row"><span>新規契約の初月</span><strong>棚代0円 ＋ 売上の30％</strong></div><div class="quote-row"><span>2か月目以降</span><strong>${yen(result.rent)} ＋ 売上の25％</strong></div><p class="selected-summary">${names.length ? names.join('、') : '左の一覧から利用する面を選んでください。'}</p>`;
         document.getElementById('sales-quote').innerHTML = !valid || !selected.size ? '' : `<div class="quote-row"><span>初月の手数料 / 差引額</span><strong>${yen(result.firstFee)} / ${yen(sales-result.firstFee)}</strong></div><div class="quote-row"><span>翌月以降の手数料</span><strong>${yen(result.regularFee)}</strong></div><div class="quote-row"><span>翌月以降の費用合計<br>棚代 ＋ 手数料</span><strong>${yen(result.rent+result.regularFee)}</strong></div><div class="quote-row"><span>翌月以降の差引額<br>売上 − 棚代 − 手数料</span><strong>${yen(sales-result.rent-result.regularFee)}</strong></div>`;
         document.getElementById('copy-plan').disabled = !selected.size || !valid;
         document.getElementById('copy-status').textContent = '';
-        planText = `委託棚の相談プラン（税込・参考）\n${size === 'large' ? '大型棚' : '小型棚'}\n利用面：${names.join('、')}\n月額棚代：${yen(result.rent)}\n初月：棚代0円＋販売手数料30％\n2か月目以降：棚代＋販売手数料25％\n想定月間売上：${yen(valid ? sales : 0)}\n初月手数料：${yen(result.firstFee)}\n翌月以降の棚代・手数料合計：${yen(result.rent+result.regularFee)}\n空き状況・配置・契約条件は店舗に確認。`;
+        planText = `委託棚の相談プラン（税込・参考）\n${size === 'large' ? '大型棚' : '小型棚'}\n利用面と寸法の目安：\n${dimensionNames.join('\n')}\n月額棚代：${yen(result.rent)}\n初月：棚代0円＋販売手数料30％\n2か月目以降：棚代＋販売手数料25％\n想定月間売上：${yen(valid ? sales : 0)}\n初月手数料：${yen(result.firstFee)}\n翌月以降の棚代・手数料合計：${yen(result.rent+result.regularFee)}\n寸法には±10mm程度の誤差があります。空き状況・配置・契約条件は店舗に確認。`;
         window.shelfState = {size, selected:[...selected]};
         window.dispatchEvent(new CustomEvent('shelf-state-change',{detail:window.shelfState}));
     }
