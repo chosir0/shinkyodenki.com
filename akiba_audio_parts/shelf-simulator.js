@@ -9,11 +9,19 @@ const SHELF_FACES = [
     [13,'左下段','背面',380,440],[14,'右下段','背面',380,440],
     [15,'左上段','水平面',1450,1650],[16,'右上段','水平面',1450,1650]
 ];
-const TOP_REQUIREMENTS = {1:[3,9],2:[4,10]};
+const FACE_REQUIREMENTS = {
+    1:{ids:[3,9],mode:'any'},2:{ids:[4,10],mode:'any'},
+    15:{ids:[5,11],mode:'all'},16:{ids:[6,12],mode:'all'}
+};
+const FACE_USAGE = {1:'吊り下げ専用・上置き不可',2:'吊り下げ専用・上置き不可',15:'棚板に置く専用・吊り下げ不可',16:'棚板に置く専用・吊り下げ不可'};
+function faceAllowed(id, selected) {
+    const rule = FACE_REQUIREMENTS[id];
+    return !rule || (rule.mode === 'all' ? rule.ids.every(required => selected.has(required)) : rule.ids.some(required => selected.has(required)));
+}
 function normalizeFaces(selected) {
     const result = new Set([...selected].filter(id => SHELF_FACES.some(face => face[0] === id)));
-    for (const [top, requirements] of Object.entries(TOP_REQUIREMENTS)) {
-        if (!requirements.some(id => result.has(id))) result.delete(Number(top));
+    for (const id of Object.keys(FACE_REQUIREMENTS)) {
+        if (!faceAllowed(id,result)) result.delete(Number(id));
     }
     return result;
 }
@@ -41,7 +49,11 @@ if (typeof document !== 'undefined') {
             const label = document.createElement('label');
             label.className = 'face-option';
             const id = face[0];
-            label.innerHTML = `<input type="checkbox" value="${id}"><span>${circled(id)} ${face[1]}<span class="face-price"></span>${TOP_REQUIREMENTS[id] ? `<small>${TOP_REQUIREMENTS[id].map(circled).join(' または ')}の選択が必要</small>` : ''}</span>`;
+            const rule = FACE_REQUIREMENTS[id];
+            const requirement = rule ? `${rule.ids.map(circled).join(rule.mode === 'all' ? ' と ' : ' または ')}${rule.mode === 'all' ? 'の両方' : ''}の選択が必要` : '';
+            label.innerHTML = `<input type="checkbox" value="${id}"><span>${circled(id)} ${face[1]}${FACE_USAGE[id] ? `<small class="face-usage">${FACE_USAGE[id]}</small>` : ''}<span class="face-price"></span>${requirement ? `<small>${requirement}</small>` : ''}</span>`;
+            label.querySelector('input').dataset.requirement = requirement;
+            label.querySelector('input').dataset.usage = FACE_USAGE[id] || '';
             grid.append(label);
         }
         fieldset.append(grid);
@@ -58,7 +70,7 @@ if (typeof document !== 'undefined') {
         for (const checkbox of groups.querySelectorAll('input')) {
             const id = Number(checkbox.value);
             checkbox.checked = selected.has(id);
-            checkbox.disabled = !!TOP_REQUIREMENTS[id] && !TOP_REQUIREMENTS[id].some(required => selected.has(required));
+            checkbox.disabled = !faceAllowed(id,selected);
             const face = SHELF_FACES.find(face => face[0] === id);
             checkbox.closest('label').querySelector('.face-price').textContent = `${yen(face[size === 'large' ? 4 : 3])} / 月`;
         }

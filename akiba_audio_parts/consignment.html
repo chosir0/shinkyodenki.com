@@ -8,7 +8,7 @@
 
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="shelf-simulator.css?v=25d9cfe">
-    <link rel="stylesheet" href="shelf-viewer.67880b85d0d9.css">
+    <link rel="stylesheet" href="shelf-viewer.4ffa725883da.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -40,7 +40,13 @@
                 <p class="shelf-note">結束バンドを使用した棚のため、寸法には±10mm程度の誤差があります。</p>
                 <section class="shelf-viewer" aria-labelledby="viewer-title">
                     <h3 id="viewer-title">3Dで貸出面の位置を確認</h3>
+                    <div class="display-methods">
+                        <div class="display-method"><svg viewBox="0 0 180 100" role="img" aria-label="天面の下からひもで商品を吊り下げる図"><path d="M15 15H165" stroke="#84b941" stroke-width="8"/><path d="M65 20V48M115 20V48" stroke="#795733" stroke-width="3"/><rect x="50" y="48" width="80" height="44" rx="4" fill="#e48643"/><path d="M80 69H100" stroke="white" stroke-width="3"/></svg><strong>①② 天面から吊るす</strong><p>天面の下に委託物を吊り下げます。天面の上に物は置けません。</p></div>
+                        <div class="display-method"><svg viewBox="0 0 180 100" role="img" aria-label="水平な棚板の上に商品を置く図"><rect x="50" y="25" width="80" height="49" rx="4" fill="#478bbe"/><path d="M80 48H100" stroke="white" stroke-width="3"/><path d="M15 80H165" stroke="#49a46a" stroke-width="8"/></svg><strong>⑮⑯ 棚板の上に置く</strong><p>水平な棚板に委託物を置きます。この面からの吊り下げはできません。</p></div>
+                    </div>
                     <p class="shelf-note">ドラッグで回転、ピンチ・ホイールで拡大縮小。番号を押すと、その面を選択・解除できます。</p>
+                    <label class="example-toggle"><input type="checkbox" id="show-examples" checked> 展示例の箱を表示</label>
+                    <p class="shelf-note">オレンジの箱は吊り下げ、青い箱は棚板に置く例です。箱は配置方法の見本で、契約面の追加や料金は発生しません。</p>
                     <div class="viewer-toolbar" aria-label="3Dの表示方向">
                         <button type="button" data-view="perspective">斜めから</button>
                         <button type="button" data-view="front">正面</button>
@@ -64,7 +70,7 @@
                 <p>チェックを入れると料金が更新されます。左右は棚を正面から見た位置です。</p>
                 <div class="shelf-actions"><button type="button" id="select-all">全16面を選ぶ</button><button type="button" id="clear-faces">選択を解除</button></div>
                 <div id="face-groups"></div>
-                <div class="shelf-rule"><strong>天面のご利用について</strong><p>天面だけの契約はできません。①は③または⑨、②は④または⑩を選ぶと追加できます。対象の側面・背面をすべて外すと、対応する天面の選択も解除されます。</p><p>他の出展者の作品を隠さないよう、配置・大きさは事前にご相談ください。希望が重なる場合は店舗で調整します。</p></div>
+                <div class="shelf-rule"><strong>吊り下げ・置き展示のご利用条件</strong><p>①②は天面からの吊り下げ専用で、上に物は置けません。①は③または⑨、②は④または⑩を選ぶと追加できます。</p><p>⑮⑯は棚板に物を置く専用の面で、吊り下げはできません。⑮は⑤と⑪の両方、⑯は⑥と⑫の両方を選ぶと追加できます。</p><p>必要な面の選択を外して条件を満たさなくなると、対応する①②⑮⑯の選択も解除されます。他の出展者の作品を隠さないよう、配置・大きさは事前にご相談ください。希望が重なる場合は店舗で調整します。</p></div>
             </section>
             <aside class="shelf-panel shelf-result" aria-labelledby="result-title">
                 <p class="shelf-eyebrow">選んだ面の料金</p><h2 id="result-title">お見積もりの目安</h2>
@@ -87,8 +93,8 @@
     <div id="footer"></div>
     <!-- common.jsを参照 -->
     <script src="common.js"></script>
-    <script src="shelf-simulator.js?v=25d9cfe"></script>
-    <script type="module" src="shelf-viewer.js?v=25d9cfe"></script>
+    <script src="shelf-simulator.js?v=display-rules-2"></script>
+    <script type="module" src="shelf-viewer.js?v=display-rules-2"></script>
 
 </body>
 

@@ -13,7 +13,7 @@ const configs = {
 };
 let state = window.shelfState || {size:'small',selected:[]};
 let currentSize, generation = 0, renderer, scene, camera, controls, model, surfaces;
-let faceObjects = [], hovered = null, visible = true;
+let faceObjects = [], examples = [], hovered = null, visible = true;
 const cache = new Map();
 const number = id => String.fromCodePoint(0x245f+id);
 const checkbox = id => document.querySelector(`#face-groups input[value="${id}"]`);
@@ -21,12 +21,12 @@ const checkbox = id => document.querySelector(`#face-groups input[value="${id}"]
 function toggle(id) {
     const input = checkbox(id);
     if (input.disabled) {
-        status.textContent = `${number(id)}の天面は、${id === 1 ? '③または⑨' : '④または⑩'}を先に選択してください。`;
+        status.textContent = `${number(id)}は、${input.dataset.requirement}です。`;
         return;
     }
     input.checked = !input.checked;
     input.dispatchEvent(new Event('change',{bubbles:true}));
-    status.textContent = `${input.closest('label').innerText.split('\n')[0]}・${input.closest('fieldset').querySelector('legend').textContent}を${input.checked ? '選択しました' : '解除しました'}。料金を更新しました。`;
+    status.textContent = `${input.closest('label').innerText.split('\n')[0]}・${input.closest('fieldset').querySelector('legend').textContent}を${input.checked ? '選択しました' : '解除しました'}。${input.dataset.usage ? input.dataset.usage+'です。' : ''}料金を更新しました。`;
 }
 
 function highlight(id) {
@@ -50,9 +50,10 @@ function refresh() {
         face.button.classList.toggle('is-locked',checkbox(face.id).disabled);
         face.button.setAttribute('aria-pressed',String(selected));
         face.button.setAttribute('aria-disabled',String(checkbox(face.id).disabled));
-        face.button.title = `${checkbox(face.id).closest('label').innerText.replace(/\n/g,' ')}・${face.type}${checkbox(face.id).disabled ? '（先に対象の側面・背面を選択）' : ''}`;
+        face.button.title = `${checkbox(face.id).closest('label').innerText.replace(/\n/g,' ')}・${face.type}`;
         face.button.setAttribute('aria-label',face.button.title);
     }
+    for (const example of examples) example.group.visible = document.getElementById('show-examples').checked && (filter.value === 'all' || filter.value === example.type);
 }
 
 function dispose(group) {
@@ -69,6 +70,7 @@ function makeFaces(config) {
     scene.add(surfaces);
     labels.replaceChildren();
     faceObjects = [];
+    examples = [];
     const {width:w,depth:d,levels:l,shelf} = config;
     function add(id,type,position,width,height,rotation,labelPosition=position) {
         const geometry = new THREE.PlaneGeometry(width,height);
@@ -107,6 +109,24 @@ function makeFaces(config) {
     }
     add(15,'水平面',[-w/4,shelf+5,0],w/2,d,[-Math.PI/2,0,0],[-w/4,shelf+10,d*.32]);
     add(16,'水平面',[w/4,shelf+5,0],w/2,d,[-Math.PI/2,0,0],[w/4,shelf+10,d*.32]);
+    // Illustrative products: suspended below the top, resting above the shelf board.
+    for (const x of [-w/4,w/4]) {
+        for (const type of ['天面','水平面']) {
+            const group = new THREE.Group();
+            const hanging = type === '天面';
+            const boxHeight = hanging ? 120 : 85;
+            const bottom = hanging ? l[0]-265 : shelf+8;
+            const box = new THREE.Mesh(new THREE.BoxGeometry(110,boxHeight,75),new THREE.MeshStandardMaterial({color:hanging?0xe48643:0x478bbe,roughness:.85,transparent:true,opacity:.9}));
+            box.position.set(x,bottom+boxHeight/2,0);
+            group.add(box);
+            if (hanging) for (const dx of [-35,35]) {
+                const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(x+dx,l[0]-3,0),new THREE.Vector3(x+dx,bottom+boxHeight,0)]),new THREE.LineBasicMaterial({color:0x795733}));
+                group.add(line);
+            }
+            surfaces.add(group);
+            examples.push({group,type});
+        }
+    }
     faceObjects.sort((a,b)=>a.id-b.id);
     for (const face of faceObjects) labels.append(face.button);
     refresh();
@@ -217,6 +237,7 @@ try {
         controls.update();
     }));
     filter.addEventListener('change',refresh);
+    document.getElementById('show-examples').addEventListener('change',refresh);
     document.getElementById('face-groups').addEventListener('pointerover',event=>{const label=event.target.closest('.face-option');if(label)highlight(Number(label.querySelector('input').value));});
     document.getElementById('face-groups').addEventListener('pointerleave',()=>highlight(null));
     window.addEventListener('shelf-state-change',event=>{
