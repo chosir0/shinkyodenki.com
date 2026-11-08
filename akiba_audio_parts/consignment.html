@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="shelf-simulator.css?v=25d9cfe">
     <link rel="stylesheet" href="shelf-viewer.fe14290af1ec.css">
-    <link rel="stylesheet" href="shelf-availability.v1.css">
+    <link rel="stylesheet" href="shelf-availability.v2.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -36,10 +36,12 @@
             <p class="shelf-eyebrow">展示する場所を確認</p>
             <h2 id="availability-title">現在の棚の空き状況</h2>
             <p>右から大型棚A・大型棚B・小型棚A・小型棚B・小型棚Cの順に並んでいます。</p>
-            <p class="shelf-note">棚を上から見た簡略図です。スマートフォンでは横にスクロールして確認できます。</p>
+            <p class="shelf-note">棚を斜め正面から見た簡略図です。各面の色と番号で空き状況を確認できます。スマートフォンでは横にスクロールして確認できます。</p>
+            <div class="availability-legend" aria-label="面の色の意味"><span class="face-free">空きあり</span><span class="face-used">利用中</span><span class="face-unknown">確認中</span></div>
             <div class="availability-scroll" tabindex="0" role="region" aria-label="5台の棚の配置と空き状況。横にスクロールできます。">
                 <div id="availability-map" class="availability-map"><p role="status">空き状況を読み込んでいます…</p></div>
             </div>
+            <details id="availability-detail" class="availability-detail"><summary>面ごとの空き状況を詳しく見る</summary><p class="shelf-note">各棚の「詳しく見る」を押すと、その棚の拡大図と①〜⑯の一覧を表示します。①②は天面からの吊り下げ、⑮⑯は棚板に置く面です。側面・背面は上から上段・中段・下段の順です。</p><div id="availability-detail-body"></div><p class="shelf-note">①は③と⑨、②は④と⑩、⑮は⑤と⑪、⑯は⑥と⑫の両方の契約が必要です。単独の面に空きがあっても、ご希望の組み合わせを利用できるか店舗へご確認ください。</p></details>
             <p id="availability-message" role="status" class="shelf-note"></p>
             <noscript><p>空き状況の表示にはJavaScriptが必要です。最新状況はお問い合わせください。</p></noscript>
             <p class="shelf-note">「空きあり」は棚全体が未使用、「一部利用中」は一部の面が利用中、「満室」は貸出可能な面に空きがない状態です。「確認中」の棚はお問い合わせください。表示は更新日時点の目安で、予約確定を示すものではありません。</p>
@@ -135,7 +137,7 @@
     <div id="footer"></div>
     <!-- common.jsを参照 -->
     <script src="common.js"></script>
-    <script type="module" src="shelf-availability.v1.js?v=per-face-admin-1"></script>
+    <script type="module" src="shelf-availability.v1.js?v=public-face-diagrams-1"></script>
     <script src="shelf-simulator.js?v=product-copy-1"></script>
     <script type="module" src="shelf-viewer.js?v=product-planner-collapsed-1"></script>
 

@@ -1,11 +1,24 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import {availabilityRows,validDate,summarizeFaces} from '../shelf-availability.v1.js';
-const data=JSON.parse(fs.readFileSync(new URL('../shelf-availability.json',import.meta.url),'utf8'));
+import {availabilityRows,validDate,summarizeFaces,diagramFaces,displayFaces} from '../shelf-availability.v1.js';
+const published=JSON.parse(fs.readFileSync(new URL('../shelf-availability.json',import.meta.url),'utf8'));
+const data={shelves:['large-a','large-b','small-a','small-b','small-c'].map(id=>({id,status:'確認中',updatedAt:null}))};
 test('published data validates and the physical shelf order is fixed',()=>{
-    const rows=availabilityRows({...data,shelves:[...data.shelves].reverse()});
+    const rows=availabilityRows({...published,shelves:[...published.shelves].reverse()});
     assert.deepEqual(rows.map(row=>row.name),['小型棚C','小型棚B','小型棚A','大型棚B','大型棚A']);
+});
+test('fixed diagrams represent every numbered face on both shelf sizes',()=>{
+    for(const size of ['small','large']){
+        const faces=diagramFaces(size);
+        assert.deepEqual(faces.map(face=>face.id).sort((a,b)=>a-b),Array.from({length:16},(_,i)=>i+1));
+        assert(faces.every(face=>face.points.length===4));
+        assert(faces.find(face=>face.id===15).points.every(point=>point[1]===350));
+        assert(faces.find(face=>face.id===1).points.every(point=>point[1]===1050));
+    }
+    assert(Object.values(displayFaces({status:'一部利用中'})).every(status=>status==='確認中'));
+    assert(Object.values(displayFaces({status:'満室'})).every(status=>status==='利用中'));
+    const saved={1:'利用中',2:'空きあり'};assert.deepEqual(displayFaces({faces:saved}),saved);
 });
 test('face statuses aggregate consistently without treating unknown faces as available',()=>{
     const faces=Object.fromEntries(Array.from({length:16},(_,i)=>[i+1,'空きあり']));
