@@ -68,6 +68,8 @@ if (typeof document !== 'undefined') {
         document.getElementById('copy-plan').disabled = !selected.size || !valid;
         document.getElementById('copy-status').textContent = '';
         planText = `委託棚の相談プラン（税込・参考）\n${size === 'large' ? '大型棚' : '小型棚'}\n利用面：${names.join('、')}\n月額棚代：${yen(result.rent)}\n初月：棚代0円＋販売手数料30％\n2か月目以降：棚代＋販売手数料25％\n想定月間売上：${yen(valid ? sales : 0)}\n初月手数料：${yen(result.firstFee)}\n翌月以降の棚代・手数料合計：${yen(result.rent+result.regularFee)}\n空き状況・配置・契約条件は店舗に確認。`;
+        window.shelfState = {size, selected:[...selected]};
+        window.dispatchEvent(new CustomEvent('shelf-state-change',{detail:window.shelfState}));
     }
     groups.addEventListener('change',event => {
         if (!event.target.matches('input[type="checkbox"]')) return;
