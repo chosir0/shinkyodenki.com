@@ -1,9 +1,10 @@
 export const SHELVES = [
-    {id:'large-a',name:'大型棚A',size:'large'},
-    {id:'large-b',name:'大型棚B',size:'large'},
-    {id:'small-a',name:'小型棚A',size:'small'},
+    // Screen order is left to right; visitors count A/B/C from the right.
+    {id:'small-c',name:'小型棚C',size:'small'},
     {id:'small-b',name:'小型棚B',size:'small'},
-    {id:'small-c',name:'小型棚C',size:'small'}
+    {id:'small-a',name:'小型棚A',size:'small'},
+    {id:'large-b',name:'大型棚B',size:'large'},
+    {id:'large-a',name:'大型棚A',size:'large'}
 ];
 export const STATUSES = {'空きあり':'available','一部利用中':'partial','満室':'full','確認中':'checking'};
 export function validDate(value) {
