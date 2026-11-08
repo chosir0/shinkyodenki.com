@@ -10,7 +10,7 @@ const SHELF_FACES = [
     [15,'左上段','水平面',1450,1650],[16,'右上段','水平面',1450,1650]
 ];
 const FACE_REQUIREMENTS = {
-    1:{ids:[3,9],mode:'any'},2:{ids:[4,10],mode:'any'},
+    1:{ids:[3,9],mode:'all'},2:{ids:[4,10],mode:'all'},
     15:{ids:[5,11],mode:'all'},16:{ids:[6,12],mode:'all'}
 };
 const FACE_USAGE = {1:'吊り下げ専用・上置き不可',2:'吊り下げ専用・上置き不可',15:'棚板に置く専用・吊り下げ不可',16:'棚板に置く専用・吊り下げ不可'};
