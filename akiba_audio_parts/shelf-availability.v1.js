@@ -7,6 +7,16 @@ export const SHELVES = [
     {id:'large-a',name:'大型棚A',size:'large'}
 ];
 export const STATUSES = {'空きあり':'available','一部利用中':'partial','満室':'full','確認中':'checking'};
+export const FACE_STATUSES=['空きあり','利用中','確認中'];
+export function summarizeFaces(faces) {
+    if(!faces||typeof faces!=='object'||Array.isArray(faces)||Object.keys(faces).length!==16)throw Error('各棚の16面を指定してください。');
+    const values=Array.from({length:16},(_,i)=>faces[String(i+1)]);
+    if(!values.every(value=>FACE_STATUSES.includes(value)))throw Error('面の状態は空きあり・利用中・確認中から指定してください。');
+    if(values.includes('確認中'))return '確認中';
+    if(values.every(value=>value==='利用中'))return '満室';
+    if(values.every(value=>value==='空きあり'))return '空きあり';
+    return '一部利用中';
+}
 export function validDate(value) {
     if(typeof value!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(value))return false;
     const date=new Date(`${value}T00:00:00Z`);
@@ -21,8 +31,12 @@ export function availabilityRows(data) {
         if(!Object.hasOwn(STATUSES,row.status))throw Error('状態は空きあり・一部利用中・満室・確認中から指定してください。');
         if(row.updatedAt!==null&&!validDate(row.updatedAt))throw Error('更新日はYYYY-MM-DD形式で指定してください。');
         if(row.status!=='確認中'&&!validDate(row.updatedAt))throw Error('確認中以外の状態には更新日が必要です。');
+        if(row.faces!==undefined){
+            if(summarizeFaces(row.faces)!==row.status)throw Error('面の状態と棚全体の状態が一致しません。');
+            if(Object.values(row.faces).some(value=>value!=='確認中')&&!validDate(row.updatedAt))throw Error('面を確認した場合は更新日が必要です。');
+        }
     }
-    return SHELVES.map(shelf=>{const row=data.shelves.find(row=>row.id===shelf.id);return {...shelf,status:row.status,updatedAt:row.updatedAt};});
+    return SHELVES.map(shelf=>{const row=data.shelves.find(row=>row.id===shelf.id);return {...shelf,status:row.status,updatedAt:row.updatedAt,...(row.faces?{faces:{...row.faces}}:{})};});
 }
 function render(rows) {
     const map=document.getElementById('availability-map');map.replaceChildren();
@@ -36,9 +50,10 @@ function render(rows) {
         const date=document.createElement('p');date.className='availability-date';
         if(row.updatedAt){const time=document.createElement('time');time.dateTime=row.updatedAt;time.textContent=row.updatedAt.replaceAll('-','/');date.append('更新：',time);}else date.textContent='更新：未更新';
         card.append(footprint,badge,date);map.append(card);
+        if(row.faces){const counts=document.createElement('p');counts.className='availability-date';counts.textContent=`利用中${Object.values(row.faces).filter(v=>v==='利用中').length}面／空き${Object.values(row.faces).filter(v=>v==='空きあり').length}面／確認中${Object.values(row.faces).filter(v=>v==='確認中').length}面`;card.append(counts);}
     }
 }
-if(typeof document!=='undefined'){
+if(typeof document!=='undefined'&&document.getElementById('availability-map')){
     (async()=>{
         try{
             const response=await fetch('shelf-availability.json',{cache:'no-store'});
