@@ -7,6 +7,7 @@
     <title>委託物販売スペース | アキバオーディオパーツセンター</title>
 
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="shelf-simulator.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,20 +23,40 @@
             <a href="index.html">HOME</a> ＞ 委託物販売スペース
         </div>
 
-        <section class="about-content">
-
-            <aside class="side-menu">
-                <ul>
-                    <li><a href="#consignment">委託物販売スペース</a></li>
-                </ul>
-            </aside>
-
-            <article class="main-content">
-                <h2 id="consignment">委託物販売スペース</h2>
-                <p>工事中</p>
-            </article>
-
+        <section class="shelf-intro">
+            <p class="shelf-eyebrow">作品に合わせて、必要な面だけ。</p>
+            <h1>委託棚 料金シミュレータ</h1>
+            <p>あなたのキットや作品を、秋葉原の店頭へ。棚のサイズと展示に使う面を選んで、月々の費用を確認できます。</p>
+            <div class="shelf-benefits"><span>新規オーナーは初月の棚代0円</span><span>月額・税込表示</span><span>商品に直接さわれる展示</span></div>
         </section>
+        <div class="shelf-layout" id="shelf-simulator">
+            <section class="shelf-panel" aria-labelledby="choose-title">
+                <h2 id="choose-title">1. 棚のサイズを選ぶ</h2>
+                <fieldset class="shelf-sizes"><legend class="sr-only">棚のサイズ</legend>
+                    <label><input type="radio" name="shelf-size" value="small" checked> <strong>小型棚</strong><span>幅700 × 奥行350 × 高さ1,050mm（目安）</span></label>
+                    <label><input type="radio" name="shelf-size" value="large"> <strong>大型棚</strong><span>幅900 × 奥行450 × 高さ1,200mm（目安）</span></label>
+                </fieldset>
+                <p class="shelf-note">結束バンドを使用した棚のため、寸法には±10mm程度の誤差があります。</p>
+                <h2>2. 利用する面を選ぶ</h2>
+                <p>チェックを入れると料金が更新されます。左右は棚を正面から見た位置です。</p>
+                <div class="shelf-actions"><button type="button" id="select-all">全16面を選ぶ</button><button type="button" id="clear-faces">選択を解除</button></div>
+                <div id="face-groups"></div>
+                <div class="shelf-rule"><strong>天面のご利用について</strong><p>天面だけの契約はできません。①は③または⑨、②は④または⑩を選ぶと追加できます。対象の側面・背面をすべて外すと、対応する天面の選択も解除されます。</p><p>他の出展者の作品を隠さないよう、配置・大きさは事前にご相談ください。希望が重なる場合は店舗で調整します。</p></div>
+            </section>
+            <aside class="shelf-panel shelf-result" aria-labelledby="result-title">
+                <p class="shelf-eyebrow">選んだ面の料金</p><h2 id="result-title">お見積もりの目安</h2>
+                <div id="quote" aria-live="polite" aria-atomic="true"></div>
+                <label class="sales-label" for="monthly-sales">月間売上の想定（税込・任意）</label>
+                <div class="sales-input"><input type="number" id="monthly-sales" min="0" max="1000000000" step="1" value="0" inputmode="numeric"><span>円</span></div>
+                <p class="shelf-note" id="sales-error" role="status"></p>
+                <div id="sales-quote" aria-live="polite" aria-atomic="true"></div>
+                <button type="button" class="shelf-primary" id="copy-plan">プラン内容をコピー</button>
+                <p id="copy-status" role="status"></p>
+                <a href="contact.html" class="shelf-contact">このプランについて相談する →</a>
+                <p class="shelf-note">この計算は検討用です。空き状況・予約・契約の確定や、商品の設置を保証するものではありません。手数料の端数処理・実際の精算額は店舗へご確認ください。</p>
+            </aside>
+        </div>
+        <noscript><p class="shelf-panel">料金シミュレータの利用にはJavaScriptを有効にしてください。料金のご相談は<a href="contact.html">お問い合わせ</a>へどうぞ。</p></noscript>
 
     </main>
 
@@ -43,6 +64,7 @@
     <div id="footer"></div>
     <!-- common.jsを参照 -->
     <script src="common.js"></script>
+    <script src="shelf-simulator.js"></script>
 
 </body>
 
